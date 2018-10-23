@@ -1,0 +1,41 @@
+{% extends 'basic.html' %}
+{% load static %}
+{% block body_block %}
+
+
+<h1 align="center"> Profile Details </h1>
+ {% for i in user_details %}<h2>
+              Name            :  {{i.user}}
+<br><br>
+              Phone Number    :  {{i.PhoneNumber}}
+<br><br>
+              Qualification   :  {{i.qualification}}
+<br><br>
+              Subjects        :  {{i.subjects}}
+<br><br>
+              Percentage      :  {{i.percentage}}
+<br><br>
+              Description     :  {{i.Description}}<br><br>
+{% endfor %}
+Hobbies         :
+
+  {% for i in hobbies %}
+
+
+  {% if forloop.last %}
+  {{i.hobby}}.
+  {% else %}
+  {{i.hobby}},
+  {% endif %}
+  {% endfor %}
+
+  <br><br>
+
+  Profile Picture<br><br>
+
+  {% for i in user_details %}
+  <img src="{{ i.profile_pic.url }}" width=240>
+  {% endfor %}
+</h2>
+
+{% endblock %}

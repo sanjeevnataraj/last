@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  form{
+  width: 950px;
+  padding: 20px;
+  border: 1px solid #270644;
+
+  }
+
+
+#b{
+
+color: blue;
+
+font-size: 20px;
+}
+
+#d{
+
+    color: green;
+
+    font-size: 20px;
+    text-align:left;
+}
+
+  </style>
+	<title></title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"> </script> <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css" media="all" /> <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"> </script> <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+
+
+</head>
+<body>
+<div class="container">
+<form method="post" action="">
+  <h3>update course </h3>
+{{ form.as_p }}
+ <div id="d"></div>
+
+ <div id = "b"></div>  
+{% csrf_token %}
+<br>
+<input type="submit" class="btn btn-primary" value="Update">
+</form>
+</div>
+
+
+<script>
+        
+    $(document).ready(function(){
+        var degree_stream;
+        var branch_stream;
+
+
+            $("#id_degree").autocomplete({
+                source: function( request, response ) {
+                   jQuery.get("/ajax_calls/search/", {
+           'term': request.term
+       }, function (data) {
+        console.log("This is ",data)       
+        var m = data[0];    
+        txt= m["stream"] ;
+        degree_stream = txt;
+        response(data);
+       });
+               },
+                minLength: 2,
+                open: function(){
+                    setTimeout(function () {
+                    $('.ui-autocomplete').css('z-index', 99);
+                    }, 0);
+                },
+              });  
+       
+            $("#id_branch").autocomplete({
+                source: function( request, response ) {
+                   jQuery.get("/ajax_calls/searchs/", {
+           'term': request.term
+       }, function (data) {
+
+        var m = data[0];    
+        txt= m["stream"];
+        branch_stream=txt;
+
+        console.log("degree name ",degree_stream)
+        console.log("branch name",branch_stream)
+        if(degree_stream==branch_stream)
+        {
+
+        document.getElementById("b").innerHTML = "<li>"+txt+"</li>";
+       
+        document.getElementById("d").innerHTML = "";
+       }
+       
+       else
+
+       {
+
+         document.getElementById("d").innerHTML = "<li>"+degree_stream+"</li>";
+          document.getElementById("b").innerHTML = "<li>"+branch_stream+"</li>";
+       }
+
+       response(data);
+       });
+               },
+                minLength: 2,
+                open: function(){
+                    setTimeout(function () {
+                    $('.ui-autocomplete').css('z-index', 99);
+                    }, 0);
+                },
+              });  
+    
+
+        var a = document.getElementById("id_degree").value;
+
+        var b = document.getElementById("id_branch").value;
+
+        console.log(a);
+
+        var d = "{{degree_stream}}";
+
+        var b = "{{branch_stream}}";
+
+        if(d==b)
+        {
+
+          document.getElementById("b").innerHTML = "<li>"+d+"</li>";
+       
+        document.getElementById("d").innerHTML = "";
+
+        }
+        else{
+
+          document.getElementById("d").innerHTML = "<li>"+d+"</li>";
+          document.getElementById("b").innerHTML = "<li>"+b+"</li>";
+
+        }
+
+        });
+
+</script>
+
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <link href="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/css/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
+    <script src="http://cdn.rawgit.com/davidstutz/bootstrap-multiselect/master/dist/js/bootstrap-multiselect.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('#id_exam').multiselect({
+                includeSelectAllOption: true
+
+            });
+
+        });
+    </script>
+
+
+</body>
+</html>
