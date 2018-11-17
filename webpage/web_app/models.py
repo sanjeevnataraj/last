@@ -1,11 +1,13 @@
 from django.db import models
-#from __future__ import unicode_literals
-# Create your models here.
 from django.contrib.auth.models import User
 from multiselectfield import MultiSelectField
 import datetime
+from django.template.defaultfilters import slugify
+from django.urls import reverse
 
-#-----------------------------------------------------------------------------------------------------
+
+
+#-----------------------------------Student Detail------------------------------------------------------------------
 
 
 streams = ( ('Engineering','Engineering'),('Medical','Medical'),('Law','Law'),('Arts','Arts'))
@@ -33,7 +35,7 @@ class Student_profile(models.Model):
     #def get_absolute_url(self):
     #    return reverse('profile-update', kwargs={'pk': self.pk})
 
-#-----------------------------------------------------------------------------------------------------
+#--------------------------------------Hobby Detail---------------------------------------------------------------
 
 class Hobby_details(models.Model):
 
@@ -46,8 +48,6 @@ class Hobby_details(models.Model):
     hobby_choices = models.CharField(max_length=25,choices = types, default='None')
 
     hobby_name = models.CharField(max_length=245)
-
-
 
 
 #-------------------------------------------Degree_detail--------------------------------------------------------
@@ -104,6 +104,8 @@ class Exam_detail(models.Model):
 
 class Course_page(models.Model):
 
+    college = models.ForeignKey('College_detail',on_delete=models.CASCADE,null=True,blank=True)
+    
     global exams
 
     course_name = models.CharField(max_length=256)
@@ -126,14 +128,36 @@ class Course_page(models.Model):
 
     updated_date = models.DateField(("Date"), default=datetime.date.today)
 
-    #modified_date = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(blank=True)
 
 
+    def save(self, *args, **kwargs):
 
+        l = ['of','is','an','the','was'] 
 
+        k = self.course_name.split(' ')
 
-    #------------------------------------------course_page foreignkey -------------------------------------------------
+        mk = k.copy()
 
+        for i in k:
+
+            if i in l:
+
+                mk.remove(i)
+
+        new = "-".join(str(x) for x in mk)
+       
+        new_source = new+ "-careers360"
+        
+        self.slug = slugify(new_source)
+
+        super(Course_page, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+
+        return (f'/{self.slug}/')
+
+#------------------------------------------course_page foreignkey -------------------------------------------------
 
 class subcoursepage(models.Model):
 
@@ -143,7 +167,7 @@ class subcoursepage(models.Model):
 
     Total_fees = models.IntegerField()
 
-#------------------------------------------------------------------------------------------------------------------
+#----------------------------------------streams--------------------------------------------------------------------------
 
 class Streams(models.Model):
 
@@ -153,4 +177,34 @@ class Streams(models.Model):
 
     Stream = models.CharField(max_length = 122)
 
+#-----------------------------------College Detail---------------------------------------------------
 
+class College_detail(models.Model):
+
+    college_name = models.CharField(max_length=122)
+
+    slug = models.SlugField(blank=True)
+
+    def save(self, *args, **kwargs):
+
+        l = ['of','is','an','the','was'] 
+
+        k = self.college_name.split(' ')
+
+        mk = k.copy()
+
+        for i in k:
+
+            if i in l:
+
+                mk.remove(i)
+
+        new = "-".join(str(x) for x in mk)
+        
+        self.slug = slugify(new)
+
+        super(College_detail, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+
+        return (f'/{self.slug}/')

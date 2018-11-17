@@ -1,0 +1,27 @@
+<html>
+<head>
+
+<style>
+
+pre{
+
+	font-size:20px;
+}
+
+</style>
+</head>
+<h1>course detail</h1>
+<pre>
+{% for i in course %}
+course name  	:{{i.course_name}}
+degree       	:{{i.degree}}
+branch 		:{{i.branch}}
+exam 		:{{i.exam}}
+course duration :{{i.course_duration}}
+eligibility 	:{{i.eligibility}}
+course detail 	:{{i.course_detail}}
+slug 		:{{i.slug}}
+
+{% endfor %}
+</pre>
+</html>

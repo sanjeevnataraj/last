@@ -1,18 +1,7 @@
-/**
- * jQuery Formset 1.3-pre
- * @author Stanislaus Madueke (stan DOT madueke AT gmail DOT com)
- * @requires jQuery 1.2.6 or later
- *
- * Copyright (c) 2009, Stanislaus Madueke
- * All rights reserved.
- *
- * Licensed under the New BSD License
- * See: http://www.opensource.org/licenses/bsd-license.php
- */
-;(function($) {
+(function($) {
     $.fn.formset = function(opts)
     {   
-        var options = $.extend({}, $.fn.formset.defaults, opts),
+            var options = $.extend({}, $.fn.formset.defaults, opts),
             flatExtraClasses = options.extraClasses.join(' '),
             totalForms = $('#id_' + options.prefix + '-TOTAL_FORMS'),
             maxForms = $('#id_' + options.prefix + '-MAX_NUM_FORMS'),

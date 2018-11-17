@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_protect
-from web_app.forms import SignUpForm,Register,Hobbies,CourseForm,Degree_detailForm,Branch_detailForm,Exam_detailForm,subcourseform,streamform
+from web_app.forms import SignUpForm,Register,Hobbies,CourseForm,Degree_detailForm,Branch_detailForm,Exam_detailForm,subcourseform,streamform,collegeForm
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from django.http import HttpResponseRedirect, HttpResponse
-from web_app.models import Student_profile,Hobby_details,Degree_detail,Course_page,Branch_detail,subcoursepage,Streams
+from web_app.models import Student_profile,Hobby_details,Degree_detail,Course_page,Branch_detail,subcoursepage,Streams,College_detail
 from django.views.generic import View,ListView,CreateView,UpdateView
 from django.contrib.auth.models import User
 from . import models
@@ -15,7 +15,27 @@ import simplejson as json
 from django.forms.models import modelformset_factory
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
+
+
+def check(request):
+
+    username = request.GET.get('username', None)
+
+    data = {
+        'is_taken': User.objects.filter(username__iexact=username).exists()
+    }
+    
+    if data['is_taken']:
+        data['error_message'] = 'A user with this username already exists.'
+    return JsonResponse(data)
+
+def insert(request):
+    
+    print(request.POST.get('val'))
+    return HttpResponse("you are login successfully")
+    # return "successfully"
 
 def index(request):
     return render(request,"homepage.html")
@@ -30,8 +50,8 @@ def user_logout(requets):
     return HttpResponseRedirect(reverse('index'))
 
 @csrf_protect
-def registration_page(request):
 
+def registration_page(request):
     registered = False
     print(request.POST)
     if request.method == "POST":
@@ -141,46 +161,41 @@ def edit_student_form(request):
 
 #------------------------------------course_detail------------------------------------------------------------------------------------------------------------------------------------
 
-def course_detail(request):
+def course_detail(request,slug):
 
     if request.method == "POST":
 
         print("It came here ")
 
         course = CourseForm(data=request.POST)
-
-        print(course)
         
         if course.is_valid():
 
-            myDict = dict(request.POST)
-        
-        #print(myDict['exam'])
-        
-            l=[]
-            
-            for i in myDict['exam']:
-            
-                l.append(i)
-            s=""
-            
-            for i in range(len(l)):
-            
-                if i==(len(l)-1):
-                    s=s+l[i]+"."
-                else:
-                    s=s+l[i]+','
-          
             print("hello")
-            course_model = course.save()
-            course_model.exam = s
+            
+            course_model = course.save(commit=False)
+            
+            course_model.college_id = 2
+            
+            #   course_model.exam = s
+            
             course_model.save()
-            course.save()
+            
 
     else:
         course = CourseForm()
 
     return render(request,"course_detail.html",{"course":course})
+
+
+def course_slug(request,slug):
+
+    course = Course_page.objects.filter(slug=slug)
+
+    print(course)
+
+    return render(request,'courseslug.html',{'course':course})
+
 
 #------------------Degree Details ---------------------------------------------------------------------
 
@@ -287,7 +302,6 @@ def autocomplte_branch(request):
   
     return HttpResponse(data, mimetype)
 
-
 def autocomplte_course(request):
     
     if request.is_ajax():
@@ -311,21 +325,30 @@ def autocomplte_course(request):
 
     return HttpResponse(data, mimetype)
 
-
-
 class List_view(ListView):
    
     context_object_name = "course_detail"
+    
     model = models.Course_page
+    
     template_name = "listview.html"
+    
     paginate_by = 1
+    
     queryset = Course_page.objects.all()
 
-def managecourse(request):
 
+#-----------------------------------------Managecourse----------------------------------------------------------
+
+def managecourse(request,pk=None):
+    
     course_model = Course_page.objects.all()
 
     course = CourseForm()
+
+    l = Course_page.objects.filter(college_id = pk)
+
+    print(l)
 
     if request.method == "POST":
         
@@ -351,7 +374,7 @@ def managecourse(request):
 
             name = {'course_name':course_name}
 
-            return HttpResponseRedirect(reverse('dynamic-arg',args=(course_name,)))
+            return HttpResponseRedirect(reverse('dynamic-arg',args=(course_name,pk)))
 
     else:
 
@@ -367,24 +390,26 @@ def managecourse(request):
         
         if d:
 
-            course_model = Course_page.objects.filter(**d)
+            l = Course_page.objects.filter(college_id=pk,**d)
+
+
 
         else:
 
-            course_model = Course_page.objects.all()    
+            course_model = l   
 
             course = CourseForm()
 
-        # print(course_name,degree,branch)
+    return render(request,"course.html",{'course':course,'course_model':l})
 
-        # course_model = Course_page.objects.filter(course_name=course_name, degree = degree, branch = branch )
-
-    return render(request,"course.html",{'course':course,'course_model':course_model})
+#---------------------------------------------------------------------------------------------------
 
 
-def dynamicfield(request,name=None):
+def dynamicfield(request,name=None,pk=None):
 
     print(name)
+
+    print(pk)
 
     course_name = request.GET.get('name')
 
@@ -406,32 +431,14 @@ def dynamicfield(request,name=None):
 
         myDict = dict(request.POST)
         
-        #print(myDict['exam'])
-        
-        
-        # if formset.is_valid():
-
-            #print("askdjnakj")
-
-            # for form in formset:
-
-            #     print("It came here ")
-            #     print(form)
-            #     subform = form.save(commit=False)
-
-            #     subform.subcourse.course_name = "python"
-
-            #     subform.save()
-
-            #     form.save()
-
+       
         if course.is_valid():
 
             with transaction.atomic():
 
                 temp_form = course.save()
                 
-                print(temp_form)
+                temp_form.college_id=pk
                 
                 if formset.is_valid():
                 
@@ -446,6 +453,8 @@ def dynamicfield(request,name=None):
                     print("where it is coming")
             
             course.save()
+
+            return HttpResponseRedirect(reverse('manage_course',args=(pk,)))
 
     else:
 
@@ -474,11 +483,9 @@ def edit_course_form(request,pk):
 
     branch_stream =  bstream.stream
 
-
     print(branch_stream)
 
     if form.is_valid():
-
 
         print("hello")
 
@@ -486,9 +493,7 @@ def edit_course_form(request,pk):
 
         return HttpResponseRedirect(reverse('manage_course'))
 
-        #return HttpResponseRedirect(reverse('manage_course'))
     return render(request,'course_update.html',{'form':form,'branch_stream':branch_stream,'degree_stream':degree_stream})
-
 
 def manage(request):
     
@@ -496,3 +501,53 @@ def manage(request):
 
     return render(request,'course.html',{'course_model':filter_course,'course':course})
 
+#---------------------------------------------------------------------------------------------------
+
+def manage_college(request):
+
+    if request.method=='POST':
+
+        collegename = request.POST.get('college_name')
+
+        college = College_detail.objects.filter(college_name=collegename)
+
+        print(college)
+
+        for i in college:
+
+            print(i.pk)
+
+            ids = i.pk
+
+        print(ids)
+            
+        return HttpResponseRedirect(reverse('manage_course',args=(ids,)))
+    
+    else:
+
+        college = collegeForm()
+
+    return render(request,'college.html',{'college':college})
+
+def about(request):
+
+    return HttpResponse('s')
+
+def add_college(request):
+
+    college_add = collegeForm(request.POST or None)
+
+    if request.method =="POST":
+
+        print(college_add)
+
+        if college_add.is_valid():
+
+            print('hello')
+
+            college_add.save()
+
+            return HttpResponseRedirect(reverse('college'))
+
+
+    return render(request,'add_college.html',{'college_add':college_add})

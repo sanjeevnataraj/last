@@ -35,8 +35,6 @@ height: 40px;
 
 }
 
-
-
 </style>
 
 </head>
@@ -47,7 +45,7 @@ height: 40px;
 
   <div class="jumbotron">
 
-    <h1>Course Page</h1>
+    <h1>Manage course</h1>
 
     <br>
 <form method ="post" id ="framework_form" >
@@ -70,12 +68,13 @@ height: 40px;
 </form>
 </h3>
 <h3>
-<form method="get" action="{% url 'manage_course' %}"> 
+<form method="get" > 
 Course <input type ="text" value="" name="course_name" id="course"><br><br>
 Branch <input type ="text" value = "" name="branch" id="branch"><br><br>
 Degree <input type ="text" value = "" name="degree" id="degree"><br><br>
 Status 
 <select id="publish" name="publish">
+<option value="">Please Choose</option>
 <option value="True" >Published</option>
 <option value ="False">UnPublished</option>
 </select>

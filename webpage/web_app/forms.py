@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from web_app.models import Student_profile,Hobby_details,Course_page,Degree_detail,Branch_detail,Exam_detail,subcoursepage,Streams
+from web_app.models import Student_profile,Hobby_details,Course_page,Degree_detail,Branch_detail,Exam_detail,subcoursepage,Streams,College_detail
 from dal import autocomplete
 from django.forms.models import inlineformset_factory
 
@@ -131,3 +131,12 @@ class streamform(forms.ModelForm):
         model = Streams
 
         fields = ('streambranch','streamdegree','Stream')
+
+class collegeForm(forms.ModelForm):
+
+    class Meta():
+
+        model = College_detail
+
+        fields = ('college_name',)
+

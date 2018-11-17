@@ -1,0 +1,16 @@
+Notes for the ajax 
+
+
+steps :
+
+
+1) var ourRequet = new XMLHttpRequest();
+
+2) ourRequest.open('GET',"some url of the json")
+
+3) ourRequest.onload = function()
+{
+	
+	var ourData = Json.parse(ourRequest.reponseText);
+	renderHtML(ourData)
+}  

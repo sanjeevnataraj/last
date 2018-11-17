@@ -11,6 +11,24 @@
       .border-radius(3);
     }
 
+
+    #user{
+
+        padding-left: 120px;
+        padding-top: 4px;
+       font-size: 16px;
+       color:  red;
+    }
+
+    #pass{
+
+      padding-left: 120px;
+      padding-top: 4px;
+      font-size: 16px;
+      color:  red;
+    }
+
+
     #field {
         margin-bottom:20px;
     }
@@ -30,6 +48,8 @@
     }
 
     </style>
+
+
     <script>
       $(document).ready(function () {
         var next = 0;
@@ -58,6 +78,57 @@
                     $(fieldID).remove();
                 });
         });
+
+
+
+    $("#id_username").change(function () {
+
+      console.log("jk")
+
+      var username = $(this).val();
+
+      $.ajax({
+        url: '/ajax/validate/',
+        data: {
+          'username': username
+        },
+        dataType: 'json',
+        success: function (data) {
+
+          if (data.is_taken) {
+            $('#id_username').css('border-color', 'red');
+            $("#user").text(" This user already exits ")
+          }
+          else
+          {
+            $('#id_username').css('border-color', 'white');
+
+           $('#user').text("")
+
+          }
+        }
+      });    
+    });
+
+// $("#id_password").change(function () {
+$('#id_password').on('change', function() {
+      var password = $(this).val().length
+
+      if (password<=5)
+      {
+        $('#id_password').css('border-color', 'red');
+        $('#pass').text("Password must be more than 5 character")
+      }
+
+      else{
+        $('#id_password').css('border-color', 'white');
+        $('#pass').text("")
+        
+      }
+
+      console.log(password)
+
+    });
     });
     </script>
 {% endblock %}
@@ -77,15 +148,18 @@
   {% if h %}
   <label forname="Userrname"> Username  </label>
   {{ signup_detail.username }}
+  <p id="user"></p>
   <p><font color="red">{{ form.name.errors }}</font></p>
+  <br>
+  <label forname="password"> Password</label>
+  {{ signup_detail.password }}
+  <p id="pass"></p>
   <br>
   <label forname="Emailid"> Email_id </label>
   {{ signup_detail.email }}
   <p><font color="red">{{ form.email.errors }}</font></p>
   <br>
-  <label forname="password"> Password</label>
-  {{ signup_detail.password }}
-  <br><br>
+  <br>
 {% endif %}
   <label forname="phonenumber"> PhoneNumber</label>
   {{ student_detail.PhoneNumber }}
@@ -116,9 +190,13 @@
   <div class="col-md-5" id="a1">
   <!-- <input id="action_id" name="action_id" type="text" placeholder="" class="form-control input-md"> -->
 {{hobbies.hobby_choices}}
+
 <p><font color="red">{{ hobbies.hobby_choices.errors }}</font></p>
+
   </div>
+
 </div>
+
 <br><br>
 
 <!-- Text input-->
@@ -128,8 +206,11 @@
   <!-- <input id="action_name" name="action_name" type="text" placeholder="" class="form-control input-md">
      -->
 {{hobbies.hobby_name}}
+
   </div>
+
 </div>
+
 <br><br>
 
 </div>
@@ -152,6 +233,6 @@
 {% endif %}
 </div>
 {% endblock %}
-
-<!--<input autocomplete="off" class="input" id="field1" name="prof1" type="text" placeholder="Type something" data-items="8"/>
-<div class="input" id="field1"  data-items="8"/>-->
+</div>
+</form>
+</div>

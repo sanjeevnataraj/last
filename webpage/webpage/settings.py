@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'web_app',
     'multiselectfield',
+    'django-session-idle-timeout',
+    'django.contrib.sitemaps',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +54,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
+MIDDLEWARE_CLASSES = [
+'django-session-idle-timeout.middleware.SessionIdleTimeout',
+]
+
+SESSION_IDLE_TIMEOUT = 10
 
 ROOT_URLCONF = 'webpage.urls'
 
@@ -74,14 +82,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webpage.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django1',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
