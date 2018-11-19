@@ -207,4 +207,5 @@ class College_detail(models.Model):
 
     def get_absolute_url(self):
 
-        return (f'/{self.slug}/')
+        # return (f'/{self.slug}/')
+        return "hello"
