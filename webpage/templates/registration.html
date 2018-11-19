@@ -81,7 +81,7 @@
 
 
 
-    $("#id_username").change(function () {
+    $("#id_username").keyup(function () {
 
       console.log("jk")
 
@@ -110,8 +110,8 @@
       });    
     });
 
-// $("#id_password").change(function () {
-$('#id_password').on('change', function() {
+//  $("#id_password").change(function () {
+$('#id_password').keyup(function () {
       var password = $(this).val().length
 
       if (password<=5)
@@ -142,7 +142,7 @@ $('#id_password').on('change', function() {
     {% else %}
     <h2>Update Profile</h2>
     {% endif %}
-  <form method="post" enctype="multipart/form-data" >
+  <form method="post" enctype="multipart/form-data" autocomplete="off">
   {% csrf_token %}
   <div id ="form">
   {% if h %}
@@ -221,10 +221,8 @@ $('#id_password').on('change', function() {
   </div>
 </div>
 <br><br>
-
 </div>
 </div>
-
 <label forname="hobby">profile_pic</label>{{ student_detail.profile_pic }}
 <br>
 <br>
