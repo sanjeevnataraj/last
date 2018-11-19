@@ -155,7 +155,7 @@ class Course_page(models.Model):
 
     def get_absolute_url(self):
 
-        return (f'/{self.slug}/')
+        return "hello"
 
 #------------------------------------------course_page foreignkey -------------------------------------------------
 
@@ -207,5 +207,5 @@ class College_detail(models.Model):
 
     def get_absolute_url(self):
 
-        # return (f'/{self.slug}/')
+     
         return "hello"
